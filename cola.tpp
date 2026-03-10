@@ -2,14 +2,14 @@
 #include <iostream>
 
 //****************************************************************************
-template <typename T> cola<T>::cola() : _numElem(0), _frente(nullptr),_fondo(nullptr) {}
+template <typename T> cola<T>::cola() : _numElem(0),_fondo(nullptr) {}
 
 //****************************************************************************
 template <typename T> cola<T>::~cola() { vaciar(); }
 
 //****************************************************************************
 template <typename T>
-cola<T>::cola(const cola<T> &s) : _numElem(0), _frente(nullptr), _fondo(nullptr) {
+cola<T>::cola(const cola<T> &s) : _numElem(0), _fondo(nullptr) {
     *this = s;
 }
 
@@ -18,7 +18,7 @@ template <typename T> cola<T> &cola<T>::operator=(const cola<T> &c) {
     if (this == &c) return *this;
     vaciar();
 
-    elemento *visitado = c._frente;
+    elemento *visitado = c._fondo->_siguiente;
     while (visitado != nullptr) {
         agregar(visitado->_valor);
         visitado = visitado->_siguiente;
@@ -30,9 +30,10 @@ template <typename T> cola<T> &cola<T>::operator=(const cola<T> &c) {
 template <typename T> void cola<T>::agregar(T valor) {
     try {
         elemento *nuevo = new elemento(valor);
-        if (estaVacia()) _frente = nuevo;
-        else _fondo->_siguiente = nuevo;
+        if (estaVacia()) nuevo->_siguiente = nuevo;
+        else nuevo->_siguiente = _fondo->_siguiente;
 
+        if (!estaVacia()) _fondo->_siguiente = nuevo;
         _fondo = nuevo;
         ++_numElem;
     } catch (std::bad_alloc &) {
@@ -44,10 +45,11 @@ template <typename T> void cola<T>::agregar(T valor) {
 template <typename T> void cola<T>::eliminar() {
     if (estaVacia()) throw std::runtime_error("La cola está vacía");
 
-    elemento *porBorrar = _frente;
-    _frente = _frente->_siguiente;
+    elemento *porBorrar = _fondo->_siguiente;
 
     if(_numElem == 1) _fondo = nullptr;
+    else _fondo->_siguiente = porBorrar->_siguiente;
+
     delete porBorrar;
     --_numElem;
 }

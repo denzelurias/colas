@@ -42,7 +42,6 @@ private:
         T _valor;
         elemento *_siguiente;
     };
-    elemento *_frente;
     elemento *_fondo;
 };
 
