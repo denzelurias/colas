@@ -2,7 +2,7 @@
 #include <iostream>
 
 //****************************************************************************
-template <typename T> cola<T>::cola() : _numElem(0),_fondo(nullptr) {}
+template <typename T> cola<T>::cola() : _numElem(0), _fondo(nullptr) {}
 
 //****************************************************************************
 template <typename T> cola<T>::~cola() { vaciar(); }
@@ -18,10 +18,14 @@ template <typename T> cola<T> &cola<T>::operator=(const cola<T> &c) {
     if (this == &c) return *this;
     vaciar();
 
+    if (c.estaVacia()) return *this;
+
     elemento *visitado = c._fondo->_siguiente;
-    while (visitado != nullptr) {
+    int copiados = 0;
+    while (copiados < c._numElem) {
         agregar(visitado->_valor);
         visitado = visitado->_siguiente;
+        ++copiados;
     }
     return *this;
 }
@@ -64,7 +68,7 @@ template <typename T> void cola<T>::vaciar() {
 template <typename T> T cola<T>::frente() const {
     if (estaVacia()) throw std::runtime_error("Error: La cola está vacía.");
 
-    return _frente->_valor;
+    return _fondo->_siguiente->_valor;
 }
 
 //****************************************************************************
@@ -84,10 +88,12 @@ template <typename T> bool cola<T>::estaVacia() const { return _numElem == 0; }
 template <typename T> void cola<T>::imprimir() const {
     if (estaVacia()) throw std::runtime_error("La cola está vacía");
 
-    elemento *aux = _frente;
-    while (aux != nullptr) {
+    elemento *aux = _fondo->_siguiente;
+    int impresos = 0;
+    while (impresos < _numElem) {
         std::cout << aux->_valor << std::endl;
         aux = aux->_siguiente;
+        ++impresos;
     }
 }
 
